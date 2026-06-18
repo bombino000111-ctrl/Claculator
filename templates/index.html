@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIP Calculator with LTCG Tax</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen py-8">
+    <div class="container mx-auto px-4 max-w-2xl">
+        <h1 class="text-3xl font-bold text-center text-blue-600 mb-8">SIP Calculator with Long-Term Tax Adjustment</h1>
+        
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <form method="POST" class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">Monthly Investment (₹)</label>
+                    <input type="number" name="monthly_investment" required min="1" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="e.g., 5000">
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">Expected Annual Return (%)</label>
+                    <input type="number" name="annual_return" required min="1" max="100" step="0.1"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="e.g., 12">
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">Investment Period (Years)</label>
+                    <input type="number" name="years" required min="1" max="50"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="e.g., 10">
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">LTCG Tax Rate (%)</label>
+                    <input type="number" name="ltcg_tax_rate" min="0" max="100" step="0.1" value="10"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="e.g., 10">
+                    <p class="text-sm text-gray-500 mt-1">Default is 10% for Indian equity funds</p>
+                </div>
+                
+                <button type="submit" 
+                        class="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition duration-200">
+                    Calculate
+                </button>
+            </form>
+        </div>
+        
+        {% if result %}
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Calculation Results</h2>
+            
+            {% if result.error %}
+            <p class="text-red-500">{{ result.error }}</p>
+            {% else %}
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <p class="text-gray-600 text-sm">Total Invested</p>
+                    <p class="text-xl font-bold text-gray-800">₹{{ result.total_invested }}</p>
+                </div>
+                
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <p class="text-gray-600 text-sm">Gross Return</p>
+                    <p class="text-xl font-bold text-green-600">₹{{ result.gross_return }}</p>
+                </div>
+                
+                <div class="bg-orange-50 p-4 rounded-lg">
+                    <p class="text-gray-600 text-sm">Tax Amount ({{ result.ltcg_tax_rate }}%)</p>
+                    <p class="text-xl font-bold text-orange-600">₹{{ result.tax_amount }}</p>
+                </div>
+                
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <p class="text-gray-600 text-sm">Net Return (After Tax)</p>
+                    <p class="text-xl font-bold text-blue-600">₹{{ result.net_return }}</p>
+                </div>
+            </div>
+            
+            <div class="mt-6 pt-6 border-t border-gray-200">
+                <div class="flex justify-between items-center">
+                    <span class="text-lg font-medium text-gray-700">Final Value After Tax</span>
+                    <span class="text-2xl font-bold text-blue-600">₹{{ result.final_value_after_tax }}</span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-3">About This Calculator</h3>
+            <p class="text-gray-600 text-sm mb-2">
+                This calculator estimates SIP returns adjusted for Long-Term Capital Gains (LTCG) tax.
+            </p>
+            <p class="text-gray-600 text-sm mb-2">
+                <strong>Formula:</strong> FV = P × [((1 + i)^n - 1) / i] × (1 + i)
+            </p>
+            <ul class="text-gray-600 text-sm list-disc list-inside space-y-1">
+                <li>P = Monthly Investment</li>
+                <li>i = Monthly Interest Rate (Annual Rate / 12 / 100)</li>
+                <li>n = Number of Months (Years × 12)</li>
+            </ul>
+            <p class="text-gray-500 text-xs mt-4">
+                <strong>Note:</strong> This is a simplified model. Real-world taxation may vary based on exemptions 
+                (e.g., ₹1 Lakh annual exemption in India) and fund types.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
