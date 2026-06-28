@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProductFinder - Honest Reviews & Best Deals</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #1a1a2e;
+            --accent-color: #e8651a;
+            --secondary-bg: #f5f5f5;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0f0f1a;
+            --text-color: #ffffff;
+            --secondary-bg: #1a1a2e;
+            --card-bg: #1a1a2e;
+            --border-color: #333355;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Sticky Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--bg-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 0.5rem 2rem;
+            background-color: var(--card-bg);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-color);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--text-color);
+            color: var(--text-color);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            background: linear-gradient(135deg, var(--secondary-bg) 0%, var(--bg-color) 100%);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.8;
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 50px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            font-family: inherit;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        /* Product Grid */
+        .products-section {
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            background-color: var(--secondary-bg);
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-description {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .star-rating {
+            color: #ffc107;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .cta-button {
+            display: block;
+            width: 100%;
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .cta-button:hover {
+            background-color: #d15512;
+            transform: scale(1.02);
+        }
+
+        /* Comparison Table */
+        .comparison-section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .comparison-table th {
+            background-color: var(--secondary-bg);
+            font-weight: 600;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background-color: var(--secondary-bg);
+        }
+
+        .comparison-table tr:hover {
+            background-color: rgba(232, 101, 26, 0.1);
+        }
+
+        .best-pick {
+            background-color: rgba(232, 101, 26, 0.15) !important;
+            border: 2px solid var(--accent-color);
+        }
+
+        .best-pick-badge {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--secondary-bg);
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .affiliate-disclosure {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-links a {
+            color: var(--text-color);
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-table {
+                font-size: 0.85rem;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 0.5rem;
+            }
+        }
+
+        /* Filter buttons */
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1.5rem;
+            border: 2px solid var(--border-color);
+            background-color: transparent;
+            color: var(--text-color);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: white;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sticky Navbar -->
+    <nav class="navbar" id="navbar">
+        <a href="#" class="logo">ProductFinder</a>
+        <ul class="nav-links">
+            <li><a href="#products">Products</a></li>
+            <li><a href="#comparison">Comparison</a></li>
+            <li><a href="#reviews">Reviews</a></li>
+            <li><a href="#about">About</a></li>
+        </ul>
+        <button class="theme-toggle" id="themeToggle">🌙 Dark Mode</button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Find the Best Products — Honest Reviews</h1>
+        <p>We test and review products so you don't have to. Get unbiased recommendations and the best deals.</p>
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search for products...">
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section" id="products">
+        <h2 class="section-title">Featured Products</h2>
+        
+        <div class="filter-container">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="electronics">Electronics</button>
+            <button class="filter-btn" data-filter="home">Home & Garden</button>
+            <button class="filter-btn" data-filter="fitness">Fitness</button>
+            <button class="filter-btn" data-filter="books">Books</button>
+        </div>
+
+        <div class="product-grid" id="productGrid">
+            <!-- Product Card 1 -->
+            <div class="product-card" data-category="electronics">
+                <img src="https://via.placeholder.com/400x300/e0e0e0/1a1a2e?text=Wireless+Headphones" alt="Wireless Headphones" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Premium Wireless Headphones</h3>
+                    <div class="star-rating">★★★★★ (4.8/5)</div>
+                    <p class="product-description">Noise-canceling technology with 30-hour battery life. Perfect for music lovers and professionals.</p>
+                    <a href="https://amazon.com/dp/EXAMPLE1?tag=YOUR-AFFILIATE-ID" target="_blank" class="cta-button">Check Price on Amazon</a>
+                </div>
+            </div>
+
+            <!-- Product Card 2 -->
+            <div class="product-card" data-category="home">
+                <img src="https://via.placeholder.com/400x300/e0e0e0/1a1a2e?text=Smart+Home+Hub" alt="Smart Home Hub" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Smart Home Control Hub</h3>
+                    <div class="star-rating">★★★★☆ (4.5/5)</div>
+                    <p class="product-description">Control all your smart devices from one central hub. Voice control compatible with Alexa and Google.</p>
+                    <a href="https://amazon.com/dp/EXAMPLE2?tag=YOUR-AFFILIATE-ID" target="_blank" class="cta-button">Check Price on Amazon</a>
+                </div>
+            </div>
+
+            <!-- Product Card 3 -->
+            <div class="product-card" data-category="fitness">
+                <img src="https://via.placeholder.com/400x300/e0e0e0/1a1a2e?text=Fitness+Tracker" alt="Fitness Tracker" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Advanced Fitness Tracker</h3>
+                    <div class="star-rating">★★★★★ (4.9/5)</div>
+                    <p class="product-description">Track steps, heart rate, sleep quality, and more. Water-resistant with 7-day battery life.</p>
+                    <a href="https://amazon.com/dp/EXAMPLE3?tag=YOUR-AFFILIATE-ID" target="_blank" class="cta-button">Check Price on Amazon</a>
+                </div>
+            </div>
+
+            <!-- Product Card 4 -->
+            <div class="product-card" data-category="electronics">
+                <img src="https://via.placeholder.com/400x300/e0e0e0/1a1a2e?text=4K+Webcam" alt="4K Webcam" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">4K Ultra HD Webcam</h3>
+                    <div class="star-rating">★★★★☆ (4.6/5)</div>
+                    <p class="product-description">Crystal clear video calls with auto-focus and built-in microphone. Perfect for remote work.</p>
+                    <a href="https://amazon.com/dp/EXAMPLE4?tag=YOUR-AFFILIATE-ID" target="_blank" class="cta-button">Check Price on Amazon</a>
+                </div>
+            </div>
+
+            <!-- Product Card 5 -->
+            <div class="product-card" data-category="books">
+                <img src="https://via.placeholder.com/400x300/e0e0e0/1a1a2e?text=Bestseller+Book" alt="Bestseller Book" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">The Ultimate Guide to Success</h3>
+                    <div class="star-rating">★★★★★ (4.7/5)</div>
+                    <p class="product-description">Transform your life with proven strategies from industry experts. Hardcover edition.</p>
+                    <a href="https://amazon.com/dp/EXAMPLE5?tag=YOUR-AFFILIATE-ID" target="_blank" class="cta-button">Check Price on Amazon</a>
+                </div>
+            </div>
+
+            <!-- Product Card 6 -->
+            <div class="product-card" data-category="home">
+                <img src="https://via.placeholder.com/400x300/e0e0e0/1a1a2e?text=Air+Purifier" alt="Air Purifier" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">HEPA Air Purifier</h3>
+                    <div class="star-rating">★★★★☆ (4.4/5)</div>
+                    <p class="product-description">Remove 99.97% of airborne particles. Quiet operation with smart air quality monitoring.</p>
+                    <a href="https://amazon.com/dp/EXAMPLE6?tag=YOUR-AFFILIATE-ID" target="_blank" class="cta-button">Check Price on Amazon</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="no-results" id="noResults">
+            No products found matching your search.
+        </div>
+    </section>
+
+    <!-- Comparison Table Section -->
+    <section class="comparison-section" id="comparison">
+        <h2 class="section-title">Product Comparison</h2>
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Product A</th>
+                    <th class="best-pick">Product B (Best Pick)</th>
+                    <th>Product C</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Price</td>
+                    <td>$99.99</td>
+                    <td class="best-pick">$129.99</td>
+                    <td>$79.99</td>
+                </tr>
+                <tr>
+                    <td>Rating</td>
+                    <td>4.5/5</td>
+                    <td class="best-pick">4.9/5</td>
+                    <td>4.2/5</td>
+                </tr>
+                <tr>
+                    <td>Warranty</td>
+                    <td>1 Year</td>
+                    <td class="best-pick">2 Years</td>
+                    <td>1 Year</td>
+                </tr>
+                <tr>
+                    <td>Battery Life</td>
+                    <td>20 hours</td>
+                    <td class="best-pick">30 hours</td>
+                    <td>15 hours</td>
+                </tr>
+                <tr>
+                    <td>Features</td>
+                    <td>Basic</td>
+                    <td class="best-pick">Advanced</td>
+                    <td>Standard</td>
+                </tr>
+                <tr>
+                    <td>Action</td>
+                    <td><a href="#" class="cta-button" style="padding: 0.5rem 1rem; font-size: 0.9rem;">View Deal</a></td>
+                    <td class="best-pick"><a href="#" class="cta-button" style="padding: 0.5rem 1rem; font-size: 0.9rem;">View Deal</a></td>
+                    <td><a href="#" class="cta-button" style="padding: 0.5rem 1rem; font-size: 0.9rem;">View Deal</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Footer -->
+    <footer id="about">
+        <div class="footer-content">
+            <h3>ProductFinder</h3>
+            <p>Your trusted source for honest product reviews and recommendations.</p>
+            
+            <div class="social-links">
+                <a href="#" aria-label="Facebook">📘</a>
+                <a href="#" aria-label="Twitter">🐦</a>
+                <a href="#" aria-label="Instagram">📷</a>
+                <a href="#" aria-label="YouTube">📺</a>
+            </div>
+
+            <div class="affiliate-disclosure">
+                <p><strong>Affiliate Disclosure:</strong> ProductFinder is a participant in the Amazon Services LLC Associates Program and other affiliate advertising programs designed to provide a means for sites to earn advertising fees by advertising and linking to Amazon.com and other merchant websites. When you click on links to various merchants on this site and make a purchase, this can result in this site earning a commission. Affiliate programs and affiliations include, but are not limited to, the eBay Partner Network. This comes at no additional cost to you and helps support our work.</p>
+                <p style="margin-top: 1rem;">© 2024 ProductFinder. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sticky Navbar on Scroll
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Dark/Light Mode Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const htmlElement = document.documentElement;
+        
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            htmlElement.setAttribute('data-theme', 'dark');
+            themeToggle.textContent = '☀️ Light Mode';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                htmlElement.removeAttribute('data-theme');
+                themeToggle.textContent = '🌙 Dark Mode';
+                localStorage.setItem('theme', 'light');
+            } else {
+                htmlElement.setAttribute('data-theme', 'dark');
+                themeToggle.textContent = '☀️ Light Mode';
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        // Search/Filter Functionality
+        const searchInput = document.getElementById('searchInput');
+        const productCards = document.querySelectorAll('.product-card');
+        const noResults = document.getElementById('noResults');
+
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            let hasResults = false;
+
+            productCards.forEach(card => {
+                const title = card.querySelector('.product-title').textContent.toLowerCase();
+                const description = card.querySelector('.product-description').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    hasResults = true;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            noResults.style.display = hasResults ? 'none' : 'block';
+        });
+
+        // Category Filter
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                button.classList.add('active');
+
+                const filterValue = button.getAttribute('data-filter');
+                let visibleCount = 0;
+
+                productCards.forEach(card => {
+                    if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
+                        card.style.display = 'block';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+            });
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId !== '#') {
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
